@@ -1,0 +1,77 @@
+题目大意：
+给出一个三维立体空间，即具有长宽高三种属性的迷宫
+如果可以逃生，输出最短逃生时间，否则输出Trapped!
+
+思路：
+比普通bfs要多一个维度的判断
+求逃生时间也需要多一个记录到达当前结点花费时间的变量
+在到达终点后输出时间并return
+在队列为空但仍未到达终点则输出Trapped!
+
+AC代码
+#include<iostream>
+#include<queue>
+using namespace std;
+#define maxn 101
+
+int N,M;
+char mp[maxn][maxn];
+int nex[8][2]={0,1,0,-1,1,0,-1,0,1,1,-1,-1,1,-1,-1,1};
+
+struct Node{
+	int r,c;
+};
+
+void bfs(int r,int c)
+{
+	queue<Node>q;
+	Node temp,TEMP;
+	temp.r=r,temp.c=c;
+	q.push(temp);
+	mp[r][c]='*';
+	while(q.size())
+	{
+		temp=q.front();
+		q.pop();
+		for(int i=0;i<8;i++)
+		{
+			int tempr=temp.r+nex[i][0];
+			int tempc=temp.c+nex[i][1];
+			if(mp[tempr][tempc]=='*')continue;
+			if(tempr<1||tempc<1||tempr>N||tempc>M)
+			{
+				continue;
+			}
+			TEMP.r=tempr,TEMP.c=tempc;
+			q.push(TEMP);
+			mp[tempr][tempc]='*';
+		}
+	}
+}
+
+int main()
+{
+	while(cin>>N>>M&&M&&N)
+	{
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				cin>>mp[i][j];
+			}
+		}
+		int ans=0;
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				if(mp[i][j]=='@')
+				{
+					ans++;
+					bfs(i,j);
+				}
+			}
+		}
+		cout<<ans<<endl;
+	}
+}
