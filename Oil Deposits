@@ -1,0 +1,92 @@
+题目大意：
+给出一个网格图，上面有'@'(白色)和'*'(黑色)
+只要图中的白色方块外一圈的八个方块中有白色方块，说明它们属于同一个战略要塞
+要求找出图中不同的战略要塞的个数
+
+思路：
+这题我用的是BFS
+然后因为该题没有什么乱七八糟的操作，所以在访问完一个'@'结点后把它变为'*',节省空间，节省代码
+
+大致操作是
+对于每个结点都遍历一遍，如果是'@'就进入bfs函数
+在bfs的while(q.size())循环体内，如果当前队头存储的结点的周围八个位置中有结点也是'@',则放入队列
+过程就像水蔓延开来一样，把一个战略要塞的内部节点全找完后退出bfs函数，继续各节点的遍历
+原来为'@'的结点被改为'*'后不会再次进入bfs，就防止了结点的重复访问
+
+AC代码
+#include<iostream>
+#include<queue>
+using namespace std;
+#define maxn 101
+
+int N,M;
+char mp[maxn][maxn];
+int nex[8][2]={0,1,0,-1,1,0,-1,0,1,1,-1,-1,1,-1,-1,1};
+
+struct Node{
+	int r,c;
+};
+
+void bfs(int r,int c)
+{
+	queue<Node>q;
+	Node temp,TEMP;
+	temp.r=r,temp.c=c;
+	q.push(temp);
+	mp[r][c]='*';
+	while(q.size())
+	{
+		temp=q.front();
+		q.pop();
+		for(int i=0;i<8;i++)
+		{
+			int tempr=temp.r+nex[i][0];
+			int tempc=temp.c+nex[i][1];
+			if(mp[tempr][tempc]=='*')continue;
+			if(tempr<1||tempc<1||tempr>N||tempc>M)
+			{
+				continue;
+			}
+			TEMP.r=tempr,TEMP.c=tempc;
+			q.push(TEMP);
+			mp[tempr][tempc]='*';
+		}
+	}
+}
+
+int main()
+{
+	while(cin>>N>>M&&M&&N)
+	{
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				cin>>mp[i][j];
+			}
+		}
+		int ans=0;
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				if(mp[i][j]=='@')
+				{
+					//cout<<"YES"<<i<<" "<<j<<endl;
+					ans++;
+					bfs(i,j);
+				}
+			}
+		}
+		/*cout<<"变幻后的为"<<endl;
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				cout<<mp[i][j];
+			}
+			cout<<endl;
+		}*/
+		cout<<ans<<endl;
+	}
+}
