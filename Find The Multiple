@@ -1,0 +1,53 @@
+原题链接：
+https://vjudge.net/contest/438445#problem/C
+
+题目大意：
+给出一个数n，要找出一个无前导零的、只由0和1组成的、且为n的倍数的数m
+题目保证m在long long范围内，且输出任意满足条件的m即可
+
+思路：
+一开始没看到m在long long内，搞得我思路往dfs要把余数作为参数传递的方向去了
+但是发现m不是一个大数后，就好办了
+dfs当前位置取0和取1的情况，每次进行取余，如果余数为0则满足条件输出即可
+
+但是注意输出答案后的回溯过程，如果不在得到答案后终止所有递的过程，可能会输出多个答案
+所以要加个flag进行判断，flag的具体操作见代码吧
+
+AC代码如下
+
+#include <iostream>
+using namespace std;
+
+typedef unsigned long long ull;
+
+bool flag;
+ull n;
+
+int nex[2]={0,1};
+
+void dfs(ull cur, int cnt)
+{
+	if(flag)return;
+	if(cnt>=20)return;
+	if(cur%n==0)
+	{
+		flag=true;
+		cout<<cur<<endl;		
+		return;
+	}
+	for(int i=0;i<=1;i++)
+	{
+		dfs(cur*10+nex[i],cnt+1);
+	}
+}
+
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0),cout.tie(0);
+	while(cin>>n&&n)
+	{
+		flag=false;
+		dfs(1,0);
+	}
+}
