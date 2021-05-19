@@ -1,0 +1,63 @@
+原题链接
+https://vjudge.net/contest/438445#problem/D
+
+题目大意：
+一开始给出两个长度为len的字符串s1和s2和一个长度为2*len的字符串tar
+定义了一个操作，让s2和s1的字符如同编织一般交替相加，形成一个长度为2*len的新字符串str
+如s1="JNU",s2="ACM"，操作后得到"AJCNMU"(先s2再s1)
+要求经过多少次操作后得到tar，有不可能获得的可能，此时输出-1
+
+思路：
+编织操作容易实现，本题关键点就在查重，一旦获得重复的字符串就说明"impossible"了
+用了STL中的set，轻松过题
+
+AC代码
+#include<iostream>
+#include<set>
+using namespace std;
+set<string>s;
+string a,b,tar;
+int len;
+
+int fun()
+{
+	string str;
+	int cnt=0;
+	while(1)
+	{
+		str.clear();
+		cnt++;
+		for(int i=0;i<len;i++)
+		{
+			str+=b[i];
+			str+=a[i];
+		}
+		if(str==tar)
+		{
+			return cnt;
+		}
+		if(s.count(str))
+		{
+			return -1;
+		}
+		s.insert(str);
+		a=str.substr(0,a.length());
+		b=str.substr(a.length(),b.length());
+	}
+}
+
+int main()
+{
+	int T;
+	cin>>T;
+	for(int t=1;t<=T;t++)
+	{
+		s.clear();
+		cin>>len;
+		cin>>a>>b>>tar;
+		int ans=fun();
+		cout<<t<<" "<<ans<<endl;
+	}
+	
+}
+
