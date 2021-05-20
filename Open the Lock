@@ -1,0 +1,100 @@
+题目链接：
+https://vjudge.net/contest/438445#problem/X
+
+题目大意：
+给出一个四位密码锁
+给出初始状态和目标状态
+有两种操作：
+1、将某一个锁位上下扭动，即1->2、2->3但是要注意1->9、9->1
+2、将相邻的锁位交换，如1234->2134，但是要注意第一位和第四位不相邻，不能换
+bfs保存当前锁位的状态
+
+
+
+AC代码
+#include<iostream>
+#include<map>
+#include<queue>
+using namespace std;
+string a,b;
+map<string,int>mp;
+int ans;
+
+int nex[2]={1,-1};
+
+void bfs()
+{
+	queue<string>q;
+	q.push(a);
+	mp[a]=0;
+	while(q.size())
+	{
+		string pre=q.front();
+		q.pop();
+		for(int i=0;i<4;i++)//每个位 
+		{
+			for(int j=1;j<=2;j++)//两种操作 
+			{
+				if(j==1)
+				{
+					for(int k=0;k<2;k++)//两种nex 
+					{
+						string temp=pre;
+						temp[i]+=nex[k];
+						if(temp[i]>'9')temp[i]='1';
+						if(temp[i]<'1')temp[i]='9';
+						if(mp[temp]==0)
+						{
+							//cout<<temp<<endl;
+							mp[temp]=mp[pre]+1;
+							if(temp==b)
+							{
+								ans=mp[temp];
+								return;
+							}
+							q.push(temp);
+						}
+					}
+				}
+				else
+				{
+					for(int k=0;k<2;k++)
+					{
+						string temp=pre;
+						int neb=i+nex[k];
+						if(neb==-1||neb==4)continue;
+						swap(temp[i],temp[neb]);
+						if(mp[temp]==0)
+						{
+							//cout<<temp<<endl;
+							mp[temp]=mp[pre]+1;
+							if(temp==b)
+							{
+								ans=mp[temp];
+								return;
+							}
+							q.push(temp);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+int main()
+{
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		mp.clear();
+		cin>>a>>b;
+		bfs();
+		cout<<ans<<endl;
+	}
+}
+
+
+
+
