@@ -1,0 +1,59 @@
+原题链接
+https://vjudge.net/contest/438445#problem/J
+
+题目大意：
+一个十二面体，先依次给出20个顶点各自的三个邻接点
+接着每次给出一个初始顶点，询问一条路线
+这条路线为经过所有顶点一次并回到初始顶点的路线
+且要按字典序输出
+
+思路：
+要输出每一条路线，感觉bfs会内存超限（至少要存60个路径数组），所以考虑DFS
+dfs写起来就相对容易了，考虑好边界情况：回到初始点并且当前路径数组长度为21
+除此之外还要用book数组打上标记防止重走
+
+AC代码
+#include<iostream>
+#include<algorithm>
+#include<vector>
+using namespace std;
+vector<int>v[21];
+bool book[21];
+int CNT;
+
+void dfs(int cur,int cnt,int *ans,int start)
+{
+	if(cnt==22&&ans[21]==start){
+		cout<<++CNT<<":  ";
+		for(int i=1;i<=21;i++){
+			cout<<ans[i];
+			if(i<21)cout<<" ";
+		}
+		cout<<endl;
+		return;
+	}
+	else if(cnt==22&&ans[21]!=start) return;
+	for(int i=0;i<3;i++){
+		if(book[v[cur][i]])continue;
+		book[v[cur][i]]=true;
+		ans[cnt]=v[cur][i];
+		dfs(v[cur][i],cnt+1,ans,start);
+		book[v[cur][i]]=false;
+	}
+}
+
+int main()
+{
+	for(int i=1;i<=20;i++){
+		int a[4];
+		for(int j=0;j<3;j++)cin>>a[j];
+		//sort(a,a+3);//试了一下，不排序也能AC，说明题给数据就是排序好的
+		for(int j=0;j<3;j++)v[i].push_back(a[j]);
+	}
+	int m,ans[23];
+	while(cin>>m&&m){
+		CNT=0;
+		ans[1]=m;
+		dfs(m,2,ans,m);
+	}
+}
